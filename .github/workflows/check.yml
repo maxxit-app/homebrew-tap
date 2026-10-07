@@ -22,4 +22,6 @@ jobs:
           ln -s "$GITHUB_WORKSPACE" "$(brew --repository)/Library/Taps/maxxit-app/homebrew-tap"
       - run: brew style --cask maxxit-app/tap/maxxit
       - run: brew audit --cask --online maxxit-app/tap/maxxit
+        env:
+          HOMEBREW_GITHUB_API_TOKEN: ${{ github.token }}
       - run: brew fetch --cask maxxit-app/tap/maxxit
