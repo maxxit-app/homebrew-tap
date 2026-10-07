@@ -1,0 +1,25 @@
+name: Check cask
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: cask-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  check:
+    name: Cask checks
+    runs-on: macos-15
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with: { persist-credentials: false }
+      - name: Register local checkout without changing installed apps
+        run: |
+          mkdir -p "$(brew --repository)/Library/Taps/maxxit-app"
+          ln -s "$GITHUB_WORKSPACE" "$(brew --repository)/Library/Taps/maxxit-app/homebrew-tap"
+      - run: brew style --cask maxxit-app/tap/maxxit
+      - run: brew audit --cask --online maxxit-app/tap/maxxit
+      - run: brew fetch --cask maxxit-app/tap/maxxit
